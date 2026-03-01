@@ -1,0 +1,52 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260301221916
+Username: AYMS\HP
+RunAs User: AYMS\HP
+Configuration Name: 
+Machine: AYMS (Microsoft Windows NT 10.0.26200.0)
+Host Application: powershell.exe -ExecutionPolicy Bypass -File setup.ps1
+Process ID: 3340
+PSVersion: 5.1.26100.7705
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.7705
+BuildVersion: 10.0.26100.7705
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is C:\Users\HP\Desktop\supmti-project\setup.log
+=========================================================
+      SupMTI Intelligent Chatbot - Automated Setup
+=========================================================
+
+Welcome! Let's configure your Chatbot environments.
+[Info] Generated your new backend/.env file!
+[Info] Creating Python virtual environment (venv)...
+    self._call_new_python(context, '-m', 'ensurepip', '--upgrade',
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          '--default-pip', stderr=subprocess.STDOUT)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\venv\__init__.py", line 454, in _call_new_python
+    subprocess.check_output(args, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\subprocess.py", line 472, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Python314\Lib\subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\subprocess.py", line 1207, in communicate
+    stdout = self.stdout.read()
+KeyboardInterrupt
+PS>TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+>> $global:?
+True
+**********************
+Windows PowerShell transcript end
+End time: 20260301221934
+**********************
