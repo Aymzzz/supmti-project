@@ -17,6 +17,7 @@ openai
 # Voice
 edge-tts
 pydub
+SpeechRecognition
 
 # Utilities
 python-dotenv

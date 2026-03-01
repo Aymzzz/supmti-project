@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface VoiceButtonProps {
@@ -9,81 +9,151 @@ interface VoiceButtonProps {
     disabled?: boolean;
 }
 
-// Language codes for Web Speech API
-const SPEECH_LANG_MAP: Record<string, string> = {
-    fr: 'fr-FR',
-    en: 'en-US',
-    darija: 'ar-MA',
-};
+// In-Browser Audio Encoder: Converts MediaStream to pure standard PCM WAV (.wav)
+class WavRecorder {
+    private audioContext: AudioContext | null = null;
+    private mediaStream: MediaStream | null = null;
+    private scriptProcessor: ScriptProcessorNode | null = null;
+    private audioBuffers: Float32Array[] = [];
+
+    async start() {
+        this.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const source = this.audioContext.createMediaStreamSource(this.mediaStream);
+
+        // 4096 buffer size, 1 input channel, 1 output channel
+        this.scriptProcessor = this.audioContext.createScriptProcessor(4096, 1, 1);
+        this.audioBuffers = [];
+
+        this.scriptProcessor.onaudioprocess = (e) => {
+            const inputData = e.inputBuffer.getChannelData(0);
+            this.audioBuffers.push(new Float32Array(inputData));
+        };
+
+        source.connect(this.scriptProcessor);
+        this.scriptProcessor.connect(this.audioContext.destination);
+    }
+
+    async stop(): Promise<Blob> {
+        return new Promise((resolve) => {
+            if (this.scriptProcessor && this.mediaStream && this.audioContext) {
+                this.scriptProcessor.disconnect();
+                this.mediaStream.getTracks().forEach(track => track.stop());
+
+                const sampleRate = this.audioContext.sampleRate;
+                const wavBlob = this.encodeWAV(this.audioBuffers, sampleRate);
+
+                this.audioContext.close().then(() => resolve(wavBlob));
+            } else {
+                resolve(new Blob());
+            }
+        });
+    }
+
+    private encodeWAV(buffers: Float32Array[], sampleRate: number): Blob {
+        let bufferLength = 0;
+        for (let i = 0; i < buffers.length; i++) {
+            bufferLength += buffers[i].length;
+        }
+
+        const result = new Float32Array(bufferLength);
+        let offset = 0;
+        for (let i = 0; i < buffers.length; i++) {
+            result.set(buffers[i], offset);
+            offset += buffers[i].length;
+        }
+
+        const buffer = new ArrayBuffer(44 + result.length * 2);
+        const view = new DataView(buffer);
+
+        const writeString = (view: DataView, offset: number, string: string) => {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        };
+
+        writeString(view, 0, 'RIFF');
+        view.setUint32(4, 36 + result.length * 2, true);
+        writeString(view, 8, 'WAVE');
+        writeString(view, 12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true); // PCM encoding
+        view.setUint16(22, 1, true); // 1 channel
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeString(view, 36, 'data');
+        view.setUint32(40, result.length * 2, true);
+
+        let writeOffset = 44;
+        for (let i = 0; i < result.length; i++, writeOffset += 2) {
+            const s = Math.max(-1, Math.min(1, result[i]));
+            view.setInt16(writeOffset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        }
+
+        return new Blob([view], { type: 'audio/wav' });
+    }
+}
 
 export default function VoiceButton({ language, onResult, disabled }: VoiceButtonProps) {
     const [isRecording, setIsRecording] = useState(false);
     const [transcript, setTranscript] = useState('');
-    const recognitionRef = useRef<any>(null);
+    const recorderRef = useRef<WavRecorder | null>(null);
 
-    const startRecording = useCallback(() => {
+    const startRecording = useCallback(async () => {
         if (disabled) return;
 
-        // Check for Web Speech API support
-        const SpeechRecognition =
-            (window as any).SpeechRecognition ||
-            (window as any).webkitSpeechRecognition;
+        try {
+            const recorder = new WavRecorder();
+            recorderRef.current = recorder;
+            await recorder.start();
 
-        if (!SpeechRecognition) {
-            alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.');
-            return;
-        }
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = SPEECH_LANG_MAP[language] || 'fr-FR';
-        recognition.interimResults = true;
-        recognition.continuous = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onstart = () => {
             setIsRecording(true);
-            setTranscript('');
-        };
-
-        recognition.onresult = (event: any) => {
-            let finalTranscript = '';
-            let interimTranscript = '';
-
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                const result = event.results[i];
-                if (result.isFinal) {
-                    finalTranscript += result[0].transcript;
-                } else {
-                    interimTranscript += result[0].transcript;
-                }
-            }
-
-            setTranscript(finalTranscript || interimTranscript);
-
-            if (finalTranscript) {
-                onResult(finalTranscript);
-            }
-        };
-
-        recognition.onerror = (event: any) => {
-            console.error('Speech recognition error:', event.error);
+            setTranscript('Listening...');
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            alert('Microphone access is denied or unavailable. Please check your permissions.');
             setIsRecording(false);
-        };
-
-        recognition.onend = () => {
-            setIsRecording(false);
-        };
-
-        recognitionRef.current = recognition;
-        recognition.start();
-    }, [language, onResult, disabled]);
-
-    const stopRecording = useCallback(() => {
-        if (recognitionRef.current) {
-            recognitionRef.current.stop();
         }
-        setIsRecording(false);
-    }, []);
+    }, [disabled]);
+
+    const sendAudioToBackend = async (audioBlob: Blob) => {
+        setTranscript('Processing...');
+        try {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'recording.wav');
+            formData.append('language', language);
+
+            const response = await fetch('/api/voice/transcribe', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) throw new Error('Transcription failed');
+
+            const data = await response.json();
+            if (data.transcript) {
+                setTranscript(data.transcript);
+                onResult(data.transcript);
+            } else {
+                setTranscript('Could not understand audio.');
+            }
+        } catch (error) {
+            console.error('Transcription error:', error);
+            setTranscript('Error processing audio.');
+        }
+
+        setTimeout(() => setTranscript(''), 2000);
+    };
+
+    const stopRecording = useCallback(async () => {
+        if (recorderRef.current && isRecording) {
+            setIsRecording(false);
+            const audioBlob = await recorderRef.current.stop();
+            await sendAudioToBackend(audioBlob);
+        }
+    }, [isRecording, language]);
 
     const toggleRecording = () => {
         if (isRecording) {
@@ -139,6 +209,7 @@ export default function VoiceButton({ language, onResult, disabled }: VoiceButto
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         zIndex: 10,
+                        boxShadow: 'var(--shadow-sm)',
                     }}
                 >
                     🎤 {transcript}

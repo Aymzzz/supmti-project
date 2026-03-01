@@ -42,10 +42,24 @@ class LLMGenerator:
     """Generates responses using OpenRouter API (OpenAI-compatible)."""
 
     def __init__(self):
-        self.client = AsyncOpenAI(
+        # Primary client (OpenRouter) with strict timeout and no retries to prevent long hangs
+        self.primary_client = AsyncOpenAI(
             api_key=settings.openrouter_api_key,
             base_url=settings.openrouter_base_url,
+            max_retries=0,
+            timeout=8.0, 
         )
+        
+        # Fallback client (Can be Groq, explicit OpenAI, or default OpenRouter)
+        fallback_key = settings.fallback_api_key or settings.openrouter_api_key
+        fallback_url = settings.fallback_base_url or settings.openrouter_base_url
+        self.fallback_client = AsyncOpenAI(
+            api_key=fallback_key,
+            base_url=fallback_url,
+            max_retries=0,
+            timeout=8.0,
+        )
+        
         self.primary_model = settings.primary_model
         self.fallback_model = settings.fallback_model
 
@@ -105,7 +119,7 @@ class LLMGenerator:
         ]
 
         try:
-            response = await self.client.chat.completions.create(
+            response = await self.primary_client.chat.completions.create(
                 model=self.primary_model,
                 messages=messages,
                 temperature=settings.temperature,
@@ -116,7 +130,7 @@ class LLMGenerator:
         except Exception as e:
             print(f"⚠️ Primary model failed: {e}. Trying fallback...")
             try:
-                response = await self.client.chat.completions.create(
+                response = await self.fallback_client.chat.completions.create(
                     model=self.fallback_model,
                     messages=messages,
                     temperature=settings.temperature,
@@ -126,7 +140,7 @@ class LLMGenerator:
             except Exception as fallback_error:
                 print(f"❌ Fallback model also failed: {fallback_error}")
                 return (
-                    "Désolé, je rencontre des difficultés techniques. "
+                    "Désolé, je rencontre des difficultés techniques (Serveur surchargé). "
                     "Veuillez réessayer dans quelques instants."
                 )
 
@@ -148,7 +162,7 @@ class LLMGenerator:
         ]
 
         try:
-            stream = await self.client.chat.completions.create(
+            stream = await self.primary_client.chat.completions.create(
                 model=self.primary_model,
                 messages=messages,
                 temperature=settings.temperature,
@@ -161,8 +175,19 @@ class LLMGenerator:
                     yield chunk.choices[0].delta.content
 
         except Exception as e:
-            print(f"⚠️ Streaming error: {e}")
-            yield (
-                "Désolé, je rencontre des difficultés techniques. "
-                "Veuillez réessayer."
-            )
+            print(f"⚠️ Streaming primary error: {e}. Trying fallback stream...")
+            try:
+                stream = await self.fallback_client.chat.completions.create(
+                    model=self.fallback_model,
+                    messages=messages,
+                    temperature=settings.temperature,
+                    max_tokens=1024,
+                    stream=True,
+                )
+
+                async for chunk in stream:
+                    if chunk.choices[0].delta.content:
+                        yield chunk.choices[0].delta.content
+            except Exception as fallback_error:
+                print(f"❌ Fallback streaming failed: {fallback_error}")
+                yield "Désolé, les serveurs d'intelligence artificielle sont actuellement surchargés. Veuillez réessayer très bientôt."

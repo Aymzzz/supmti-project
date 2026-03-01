@@ -32,10 +32,9 @@ class RAGPipeline:
         Returns:
             Dict with 'answer', 'sources', and 'language'
         """
-        # 1. Retrieve relevant documents
+        # 1. Retrieve relevant documents (search across all languages)
         retrieved_docs = self.retriever.retrieve(
             query=question,
-            language=language,
             category=category,
         )
 
@@ -75,10 +74,9 @@ class RAGPipeline:
         Stream a response through the RAG pipeline.
         Yields tokens as they are generated.
         """
-        # 1. Retrieve relevant documents
+        # 1. Retrieve relevant documents (search all languages)
         retrieved_docs = self.retriever.retrieve(
             query=question,
-            language=language,
             category=category,
         )
 

@@ -8,14 +8,18 @@ import json
 
 
 class Settings(BaseSettings):
-    # OpenRouter API
+    # APIs
     openrouter_api_key: str = ""
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    openai_api_key: str = ""
+    fallback_api_key: str = ""
+    fallback_base_url: str = ""
 
     # Model Configuration
     primary_model: str = "openai/gpt-4o-mini"
     fallback_model: str = "meta-llama/llama-3.3-70b-instruct"
-    embedding_model: str = "all-MiniLM-L6-v2"
+    # Use multilingual embedding so English questions can match French database texts
+    embedding_model: str = "paraphrase-multilingual-MiniLM-L12-v2"
 
     # ChromaDB
     chroma_persist_dir: str = "./chroma_db"

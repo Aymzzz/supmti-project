@@ -178,10 +178,10 @@ export default function HomePage() {
                             </svg>
                         </button>
                         <div>
-                            <h1 style={{ fontSize: '16px', fontWeight: 700 }}>
-                                <span className="gradient-text">SupMTI</span> Assistant
+                            <h1 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--primary-dark)' }}>
+                                SupMTI <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Assistant</span>
                             </h1>
-                            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                            <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                                 {language === 'fr' ? 'Assistant d\'orientation intelligent' :
                                     language === 'darija' ? 'مساعد التوجيه الذكي' :
                                         'Intelligent orientation assistant'}
@@ -204,7 +204,7 @@ export default function HomePage() {
                             animate={{ scale: 1 }}
                             transition={{ type: 'spring', damping: 10, stiffness: 100 }}
                         >
-                            🎓
+                            <span style={{ color: 'var(--primary)' }}>🎓</span>
                         </motion.div>
                         <motion.h2
                             className="welcome-title"

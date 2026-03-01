@@ -24,6 +24,25 @@ class EmbeddingModel:
     def model(self) -> SentenceTransformer:
         if self._model is None:
             print(f"📦 Loading embedding model: {settings.embedding_model}")
+            
+            # Suppress Hugging Face and sentence-transformers warnings
+            import os
+            import logging
+            import warnings
+            
+            os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+            # Optional: hide the "unauthenticated request" warning
+            os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
+            
+            try:
+                from transformers import logging as hf_logging
+                hf_logging.set_verbosity_error()
+            except ImportError:
+                pass
+                
+            warnings.filterwarnings("ignore", category=UserWarning)
+            logging.getLogger("sentence_transformers").setLevel(logging.ERROR)
+            
             self._model = SentenceTransformer(settings.embedding_model)
             print("✅ Embedding model loaded")
         return self._model

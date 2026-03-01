@@ -51,17 +51,19 @@ export default function Sidebar({ onNewChat, language }: SidebarProps) {
                     width: '40px',
                     height: '40px',
                     borderRadius: 'var(--radius-md)',
-                    background: 'var(--gradient-primary)',
+                    background: 'var(--primary)',
+                    color: 'white',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '22px',
+                    boxShadow: 'var(--shadow-sm)',
                 }}>
                     🎓
                 </div>
                 <div>
-                    <h2 style={{ fontSize: '16px', fontWeight: 700 }} className="gradient-text">SupMTI</h2>
-                    <p style={{ fontSize: '10px', color: 'var(--text-muted)' }}>AI Chatbot</p>
+                    <h2 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--primary-dark)' }}>SupMTI</h2>
+                    <p style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>AI Chatbot</p>
                 </div>
             </div>
 
