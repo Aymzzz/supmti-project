@@ -1,0 +1,30 @@
+# FastAPI & Server
+fastapi
+uvicorn[standard]
+python-multipart
+websockets
+
+# RAG Pipeline
+chromadb
+sentence-transformers
+langchain
+langchain-community
+langchain-text-splitters
+
+# LLM API (OpenRouter uses OpenAI-compatible API)
+openai
+
+# Voice
+edge-tts
+pydub
+
+# Utilities
+python-dotenv
+pydantic
+pydantic-settings
+httpx
+rank-bm25
+
+# Testing
+pytest
+pytest-asyncio

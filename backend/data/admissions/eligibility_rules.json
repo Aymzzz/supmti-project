@@ -1,0 +1,63 @@
+{
+  "programs": {
+    "genie_informatique": {
+      "name": "Génie Informatique",
+      "name_en": "Computer Engineering",
+      "name_darija": "هندسة المعلوميات",
+      "eligible_diplomas": [
+        "Bac Sciences Mathématiques",
+        "Bac Sciences Physiques",
+        "Bac Sciences de la Vie et de la Terre",
+        "BTS Informatique",
+        "DUT Informatique",
+        "DEUG Sciences"
+      ],
+      "min_note": 12.0,
+      "specialties": ["mathématiques", "physique", "informatique"],
+      "description": "Formation en développement logiciel, réseaux, et systèmes d'information."
+    },
+    "genie_civil": {
+      "name": "Génie Civil",
+      "name_en": "Civil Engineering",
+      "name_darija": "الهندسة المدنية",
+      "eligible_diplomas": [
+        "Bac Sciences Mathématiques",
+        "Bac Sciences Physiques",
+        "BTS Génie Civil",
+        "DUT Génie Civil"
+      ],
+      "min_note": 12.0,
+      "specialties": ["mathématiques", "physique"],
+      "description": "Formation en construction, structures, et gestion de projets BTP."
+    },
+    "genie_electrique": {
+      "name": "Génie Électrique",
+      "name_en": "Electrical Engineering",
+      "name_darija": "الهندسة الكهربائية",
+      "eligible_diplomas": [
+        "Bac Sciences Mathématiques",
+        "Bac Sciences Physiques",
+        "BTS Électrotechnique",
+        "DUT Génie Électrique"
+      ],
+      "min_note": 12.0,
+      "specialties": ["mathématiques", "physique", "électronique"],
+      "description": "Formation en systèmes électriques, électronique, et automatique."
+    },
+    "management": {
+      "name": "Management & Gestion",
+      "name_en": "Management & Business",
+      "name_darija": "التدبير والتسيير",
+      "eligible_diplomas": [
+        "Bac Sciences Économiques",
+        "Bac Sciences Mathématiques",
+        "Bac Lettres",
+        "BTS Comptabilité",
+        "DUT Gestion"
+      ],
+      "min_note": 11.0,
+      "specialties": ["économie", "gestion", "comptabilité"],
+      "description": "Formation en gestion d'entreprise, marketing, et finance."
+    }
+  }
+}
