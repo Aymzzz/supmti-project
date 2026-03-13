@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 interface SidebarProps {
     onNewChat: () => void;
@@ -10,6 +11,7 @@ interface SidebarProps {
 const LABELS = {
     fr: {
         newChat: 'Nouvelle conversation',
+        phoneCall: 'Appeler l\'Assistant',
         features: 'Fonctionnalités',
         chat: 'Chat textuel',
         voice: 'Interaction vocale',
@@ -20,6 +22,7 @@ const LABELS = {
     },
     en: {
         newChat: 'New conversation',
+        phoneCall: 'Call Assistant',
         features: 'Features',
         chat: 'Text chat',
         voice: 'Voice interaction',
@@ -30,6 +33,7 @@ const LABELS = {
     },
     darija: {
         newChat: 'محادثة جديدة',
+        phoneCall: 'اتصل بالمساعد',
         features: 'المميزات',
         chat: 'الدردشة النصية',
         voice: 'التفاعل الصوتي',
@@ -81,6 +85,25 @@ export default function Sidebar({ onNewChat, language }: SidebarProps) {
                 </svg>
                 {labels.newChat}
             </motion.button>
+
+            {/* Phone Call Link */}
+            <Link href="/call" style={{ textDecoration: 'none' }}>
+                <motion.div
+                    className="btn-secondary"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{ 
+                        width: '100%', justifyContent: 'center', marginBottom: '24px',
+                        display: 'flex', alignItems: 'center', gap: '8px',
+                        padding: '10px 15px', borderRadius: 'var(--radius-md)',
+                        background: 'rgba(16, 185, 129, 0.1)', color: '#10b981',
+                        border: '1px solid rgba(16, 185, 129, 0.2)', fontWeight: 600
+                    }}
+                >
+                    <span style={{ fontSize: '18px' }}>📞</span>
+                    {labels.phoneCall}
+                </motion.div>
+            </Link>
 
             {/* Features List */}
             <div style={{ flex: 1 }}>

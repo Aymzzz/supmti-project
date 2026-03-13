@@ -32,9 +32,15 @@ class RAGPipeline:
         Returns:
             Dict with 'answer', 'sources', and 'language'
         """
-        # 1. Retrieve relevant documents (search across all languages)
+        # 1. Translate query to French for retrieval if needed
+        search_query = question
+        if language and language != "fr":
+            search_query = await self.generator.translate_to_french(question)
+            print(f"🔄 Translated query for retrieval: '{question}' -> '{search_query}'")
+
+        # 2. Retrieve relevant documents (search across all languages)
         retrieved_docs = self.retriever.retrieve(
-            query=question,
+            query=search_query,
             category=category,
         )
 
@@ -74,9 +80,15 @@ class RAGPipeline:
         Stream a response through the RAG pipeline.
         Yields tokens as they are generated.
         """
-        # 1. Retrieve relevant documents (search all languages)
+        # 1. Translate query to French for retrieval if needed
+        search_query = question
+        if language and language != "fr":
+            search_query = await self.generator.translate_to_french(question)
+            print(f"🔄 Translated query for retrieval: '{question}' -> '{search_query}'")
+
+        # 2. Retrieve relevant documents (search across all languages)
         retrieved_docs = self.retriever.retrieve(
-            query=question,
+            query=search_query,
             category=category,
         )
 

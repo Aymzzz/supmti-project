@@ -7,12 +7,20 @@ from typing import Dict, List, Optional
 
 # Interest-to-program mapping weights
 INTEREST_WEIGHTS = {
+    # IT / Software Engineering
     "programming": {"genie_informatique": 10, "genie_electrique": 3},
     "informatique": {"genie_informatique": 10, "genie_electrique": 3},
     "développement": {"genie_informatique": 10},
     "web": {"genie_informatique": 8},
     "mobile": {"genie_informatique": 8},
     "ai": {"genie_informatique": 9},
+    "intelligence artificielle": {"genie_informatique": 9},
+    "data science": {"genie_informatique": 9},
+    "machine learning": {"genie_informatique": 9},
+    "cybersécurité": {"genie_informatique": 7},
+    "réseaux": {"genie_informatique": 7, "genie_electrique": 4},
+    "code": {"genie_informatique": 9},
+    "logiciel": {"genie_informatique": 10},
     "intelligence artificielle": {"genie_informatique": 9},
     "data science": {"genie_informatique": 9},
     "machine learning": {"genie_informatique": 9},
@@ -63,15 +71,45 @@ class RecommendationService:
         """
         scores = {}
 
+        # Intelligent mapping (handle typos, partial matches, and multi-word mapping)
         for interest in interests:
-            interest_lower = interest.lower().strip()
+            interest_lower = str(interest).lower().strip()
+            
+            # Normalize common synonyms manually since it's faster than making an LLM call for every endpoint hit
+            import typing
+            normalized = interest_lower
+            if "ordinateur" in interest_lower:
+                normalized = "informatique"
+            elif "ia" in interest_lower:
+                normalized = "ai"
+            elif "business" in interest_lower or "argent" in interest_lower:
+                normalized = "management"
+            elif "construire" in interest_lower or "pont" in interest_lower:
+                normalized = "construction"
+
+            # Force type checker to recognize normalized as a string
+            normalized_str = typing.cast(str, normalized)
+
+            matched_any = False
             for keyword, weights in INTEREST_WEIGHTS.items():
-                if keyword in interest_lower or interest_lower in keyword:
+                if keyword in normalized_str or normalized_str in keyword:
+                    matched_any = True
                     for program_id, weight in weights.items():
                         scores[program_id] = scores.get(program_id, 0) + weight
+            
+            # If no direct match, assume general engineering interest for IT/Elec
+            if not matched_any:
+                if "technologie" in normalized_str or "tech" in normalized_str:
+                    scores["genie_informatique"] = scores.get("genie_informatique", 0) + 5
+                    scores["genie_electrique"] = scores.get("genie_electrique", 0) + 5
+                elif "design" in normalized_str:
+                    scores["genie_informatique"] = scores.get("genie_informatique", 0) + 6
+                    scores["management"] = scores.get("management", 0) + 4
 
         # Normalize scores to percentages
         max_score = max(scores.values(), default=1)
+        if max_score == 0:
+            max_score = 1
         recommendations = []
 
         for program_id, score in sorted(

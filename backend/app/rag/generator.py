@@ -11,11 +11,11 @@ from app.config import settings
 
 
 # System prompt for the SupMTI chatbot
-SYSTEM_PROMPT_TEMPLATE = """Tu es l'assistant virtuel intelligent de SupMTI (École Supérieure des Sciences et Technologies de l'Informatique et du Management), un chatbot d'orientation scolaire.
+SYSTEM_PROMPT_TEMPLATE = """Tu es l'assistant virtuel intelligent de SupMTI (École Supérieure des Sciences et Technologies de l'Informatique et du Management), un véritable CONSEILLER D'ORIENTATION SCOLAIRE.
 
 ## Ton rôle :
 - Aider les futurs étudiants à découvrir les filières de SupMTI
-- Recommander la filière la plus adaptée selon leur profil
+- Agir comme un GUIDE interactif : Si un étudiant cherche sa voie, pose-lui progressivement des questions ciblées sur ses centres d'intérêt (ex: "Préférez-vous la théorie ou la pratique ?", "Aimez-vous la programmation, construire des choses ou gérer des projets ?"). Recommande ensuite la meilleure filière.
 - Vérifier l'éligibilité des étudiants aux formations
 - Répondre aux questions sur l'école (admissions, frais, campus, etc.)
 
@@ -101,6 +101,37 @@ class LLMGenerator:
             history_parts.append(f"{role}: {msg['content']}")
         return "\n".join(history_parts)
 
+    async def translate_to_french(self, text: str) -> str:
+        """Translate the user query to French to improve BM25 retrieval."""
+        prompt = (
+            "Traduisez le texte suivant en français. "
+            "Ne renvoyez QUE la traduction, sans guillemets, sans aucun autre texte ou explication.\n\n"
+            f"Texte : {text}"
+        )
+        messages = [{"role": "user", "content": prompt}]
+        
+        try:
+            response = await self.primary_client.chat.completions.create(
+                model=self.primary_model,
+                messages=messages,
+                temperature=0.0,
+                max_tokens=256,
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            print(f"⚠️ Translation primary failed: {e}. Trying fallback...")
+            try:
+                response = await self.fallback_client.chat.completions.create(
+                    model=self.fallback_model,
+                    messages=messages,
+                    temperature=0.0,
+                    max_tokens=256,
+                )
+                return response.choices[0].message.content.strip()
+            except Exception as fallback_error:
+                print(f"❌ Fallback translation also failed: {fallback_error}")
+                return text  # Fallback to original text
+
     async def generate(
         self,
         query: str,
@@ -108,7 +139,7 @@ class LLMGenerator:
         conversation_history: Optional[List[Dict]] = None,
         language: str = "fr",
     ) -> str:
-        """Generate a response using the LLM."""
+        """Generate a response using the LLM with tool calling support."""
         context = self._format_context(retrieved_docs)
         history = self._format_history(conversation_history or [])
         system_prompt = self._build_system_prompt(context, history)
@@ -118,14 +149,65 @@ class LLMGenerator:
             {"role": "user", "content": query},
         ]
 
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_program_recommendations",
+                    "description": "Call this to get actual program recommendations based on the user's interests.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "interests": {
+                                "type": "array",
+                                "items": {"type": "string"},
+                                "description": "List of the student's interests (e.g. ['math', 'AI', 'business'])"
+                            }
+                        },
+                        "required": ["interests"]
+                    }
+                }
+            }
+        ]
+
         try:
             response = await self.primary_client.chat.completions.create(
                 model=self.primary_model,
                 messages=messages,
                 temperature=settings.temperature,
                 max_tokens=1024,
+                tools=tools,
+                tool_choice="auto"
             )
-            return response.choices[0].message.content
+            
+            response_message = response.choices[0].message
+            
+            # Check if the model wants to call the recommendation tool
+            if response_message.tool_calls:
+                from app.services.recommendation_service import recommendation_service
+                
+                messages.append(response_message)
+                for tool_call in response_message.tool_calls:
+                    if tool_call.function.name == "get_program_recommendations":
+                        args = json.loads(tool_call.function.arguments)
+                        rec_result = recommendation_service.recommend(interests=args.get("interests", []))
+                        
+                        messages.append({
+                            "role": "tool",
+                            "tool_call_id": tool_call.id,
+                            "content": json.dumps(rec_result)
+                        })
+                
+                # Get the final response integrating the tool result
+                final_response = await self.primary_client.chat.completions.create(
+                    model=self.primary_model,
+                    messages=messages,
+                    temperature=settings.temperature,
+                    max_tokens=1024,
+                )
+                return final_response.choices[0].message.content
+
+            return response_message.content
 
         except Exception as e:
             print(f"⚠️ Primary model failed: {e}. Trying fallback...")
@@ -151,7 +233,7 @@ class LLMGenerator:
         conversation_history: Optional[List[Dict]] = None,
         language: str = "fr",
     ) -> AsyncGenerator[str, None]:
-        """Stream a response token-by-token using the LLM."""
+        """Stream a response token-by-token using the LLM. Supports tool calling."""
         context = self._format_context(retrieved_docs)
         history = self._format_history(conversation_history or [])
         system_prompt = self._build_system_prompt(context, history)
@@ -161,7 +243,72 @@ class LLMGenerator:
             {"role": "user", "content": query},
         ]
 
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_program_recommendations",
+                    "description": "Call this to get actual program recommendations based on the user's interests.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "interests": {
+                                "type": "array",
+                                "items": {"type": "string"},
+                                "description": "List of the student's interests (e.g. ['math', 'AI', 'business'])"
+                            }
+                        },
+                        "required": ["interests"]
+                    }
+                }
+            }
+        ]
+
         try:
+            # First, make a non-streaming call to check if the LLM wants to use a tool
+            initial_response = await self.primary_client.chat.completions.create(
+                model=self.primary_model,
+                messages=messages,
+                temperature=settings.temperature,
+                max_tokens=1024,
+                tools=tools,
+                tool_choice="auto"
+            )
+            
+            response_message = initial_response.choices[0].message
+            
+            # Check if the model wants to call the recommendation tool
+            if response_message.tool_calls:
+                from app.services.recommendation_service import recommendation_service
+                
+                messages.append(response_message)
+                for tool_call in response_message.tool_calls:
+                    if tool_call.function.name == "get_program_recommendations":
+                        args = json.loads(tool_call.function.arguments)
+                        rec_result = recommendation_service.recommend(interests=args.get("interests", []))
+                        
+                        messages.append({
+                            "role": "tool",
+                            "tool_call_id": tool_call.id,
+                            "content": json.dumps(rec_result)
+                        })
+                
+                # We have the tool result, now stream the final answer
+                stream = await self.primary_client.chat.completions.create(
+                    model=self.primary_model,
+                    messages=messages,
+                    temperature=settings.temperature,
+                    max_tokens=1024,
+                    stream=True,
+                )
+                
+                async for chunk in stream:
+                    if chunk.choices[0].delta.content:
+                        yield chunk.choices[0].delta.content
+                return
+            
+            # If no tool calls, just stream the text directly from the initial response content if possible
+            # But the best way is to re-execute as a stream since we didn't use `stream=True`
             stream = await self.primary_client.chat.completions.create(
                 model=self.primary_model,
                 messages=messages,
