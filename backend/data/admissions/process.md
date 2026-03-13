@@ -1,44 +1,30 @@
-# Processus d'admission – SupMTI
+Processus d'Admission à SUPMTI Meknès
 
-## Étapes d'inscription
+L'admission à l'École Supérieure de Management, Informatique et Télécommunication (SUPMTI) est conçue pour sélectionner les meilleurs profils à travers un processus rigoureux et équitable.
 
-1. **Dépôt du dossier en ligne**
-   - Remplir le formulaire d'inscription sur le site de l'école
-   - Joindre les documents requis (relevés de notes, diplômes, photos)
+1. Les Étapes d'Admission
 
-2. **Étude du dossier**
-   - Vérification de l'éligibilité académique
-   - Évaluation du parcours scolaire
+Le droit d'admission en première année ou en admission parallèle (passerelles) repose sur les étapes suivantes :
 
-3. **Concours d'entrée** (si applicable)
-   - Épreuve écrite en mathématiques et/ou physique
-   - Entretien de motivation
+Étape 1 : Étude de dossier
+L'école se réserve le droit de sélectionner les dossiers de candidature sur la base des résultats scolaires (lycée) ou universitaires (pour les admissions parallèles). Les notes des matières principales (comme les mathématiques ou l'économie) sont particulièrement scrutées.
 
-4. **Résultats**
-   - Publication des résultats dans un délai de 2 semaines
-   - Notification par email et SMS
+Étape 2 : Examen Écrit (Test)
+Les candidats retenus après l'étude de dossier passent un test écrit d'évaluation des prérequis selon la filière choisie.
 
-5. **Inscription définitive**
-   - Paiement des frais d'inscription
-   - Dépôt des documents originaux
+Étape 3 : Entretien Oral (Jury)
+Cet entretien a pour but d'appréhender la personnalité, la motivation du candidat, ainsi que ses compétences de communication (Soft Skills).
 
-## Documents requis
+2. Bourses d'Excellence
 
-- Copie du baccalauréat ou équivalent
-- Relevés de notes des deux dernières années
-- Copie de la CIN ou du passeport
-- 4 photos d'identité
-- Attestation de diplôme (pour les Bac+2+)
+Conformément à son slogan "Le Plaisir d'Être Excellent", SUPMTI encourage les étudiants brillants.
 
-## Dates importantes
+L'école organise des concours d'entrée spécifiques pour les boursiers d'excellence.
 
-- Ouverture des inscriptions: Juin
-- Date limite de dépôt: Septembre
-- Concours d'entrée: Juillet - Septembre
-- Rentrée universitaire: Octobre
+Des bourses d'études allant de 30% à 100% sont octroyées chaque année aux étudiants présentant un excellent dossier académique.
 
-## Contact admissions
+3. Documents Requis
 
-- Email: admissions@supmti.ac.ma
-- Téléphone: +212 5XX XX XX XX
-- Bureau: Bâtiment A, Rez-de-chaussée
+(Informations générales) * Copies légalisées du diplôme (Bac, Licence) et des relevés de notes.
+
+Formulaire de candidature rempli (disponible sur inscriptions.supmtimeknes.ac.ma).

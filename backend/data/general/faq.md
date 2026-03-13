@@ -1,50 +1,32 @@
-# FAQ – SupMTI
+Foire Aux Questions (FAQ) - SUPMTI Meknès
 
-## Questions fréquentes
+À propos de l'école
 
-### Quelles sont les filières disponibles ?
+Qui est SUPMTI Meknès ?
+SUPMTI Meknès est une école supérieure privée de formation en ingénierie, télécommunication et informatique, accréditée par l'État. Sa mission est de favoriser la réussite académique et l'insertion professionnelle de ses étudiants. Son slogan est : "Le Plaisir d'Être Excellent".
 
-SupMTI propose plusieurs filières d'ingénierie et de management:
-- Génie Informatique
-- Génie Civil  
-- Génie Électrique
-- Management & Gestion
+Où se trouve l'école ?
+L'école est située en plein centre-ville de Meknès (Al Kobera VN, 35 Rue Badr), à proximité de tous les moyens de transport.
 
-### Quels diplômes sont acceptés pour l'admission ?
+Corps professoral et Vie étudiante
 
-L'admission est ouverte aux titulaires de:
-- Baccalauréat (Sciences Mathématiques, Sciences Physiques, SVT, Sciences Économiques)
-- BTS dans une spécialité pertinente
-- DUT dans une spécialité pertinente
-- DEUG Sciences
+Qui sont les professeurs à SUPMTI ? La quasi-totalité de nos professeurs sont titulaires d'un Doctorat ou d'un PhD, et sont issus de grandes écoles nationales (ENSIAS, INPT, EMI, ISCAE, ENSAM) ou internationales. Nous comptons parmi eux des experts en Management, Économie, Mathématiques, Informatique et Soft Skills.
 
-### Quel est le coût de la formation ?
+Quelles sont les activités étudiantes proposées ?
+La vie associative est très riche grâce au BDE (Bureau des Étudiants) et aux clubs. Ils organisent des conférences (IA, cybersécurité, business intelligence), des tournois sportifs, des événements culturels (Journée Africaine, Journée Chaâbana), des actions solidaires, des événements gaming et une fête d'intégration annuelle.
 
-Les frais de scolarité varient selon la filière. Contactez le service des admissions pour les tarifs actuels. Des bourses sont disponibles pour les étudiants méritants.
+International
 
-### Est-ce qu'il y a des bourses ?
+L'école accepte-t-elle les étudiants internationaux ?
+Oui, plus de 15 nationalités sont représentées à SUPMTI. L'école propose un accompagnement pour le logement (appartements meublés), les démarches administratives et dispose d'une cellule dédiée à l'intégration.
 
-Oui, SupMTI propose des bourses d'excellence basées sur le mérite académique. Les critères d'attribution sont:
-- Note de baccalauréat supérieure à 16/20
-- Résultats exceptionnels au concours d'entrée
-- Situation sociale (sous conditions)
+Existe-t-il des opportunités à l'international ?
+Oui, l'école propose des co-diplômations internationales avec l'Université de Lorraine, le Groupe IGS, l'ISTEC, et possède un partenariat cycle prépa vers l'Efrei Paris.
 
-### Où se trouve l'école ?
+Contacts
 
-SupMTI est située au Maroc. L'adresse exacte et les directions sont disponibles sur notre site web.
+Téléphone : 06 45 62 70 70
 
-### Y a-t-il des activités parascolaires ?
+Email : contact@supmtimeknes.ac.ma
 
-Oui, l'école propose de nombreux clubs et activités:
-- Club Informatique
-- Club Robotique
-- Club Entrepreneuriat
-- Activités sportives
-- Événements culturels
-
-### Comment puis-je contacter l'école ?
-
-- Email: contact@supmti.ac.ma
-- Admissions: admissions@supmti.ac.ma
-- Téléphone: +212 5XX XX XX XX
-- Site web: www.supmti.ac.ma
+Site Web : https://supmtimeknes.ac.ma

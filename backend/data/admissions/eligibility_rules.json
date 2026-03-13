@@ -1,63 +1,39 @@
 {
-  "programs": {
-    "genie_informatique": {
-      "name": "Génie Informatique",
-      "name_en": "Computer Engineering",
-      "name_darija": "هندسة المعلوميات",
-      "eligible_diplomas": [
-        "Bac Sciences Mathématiques",
-        "Bac Sciences Physiques",
-        "Bac Sciences de la Vie et de la Terre",
-        "BTS Informatique",
-        "DUT Informatique",
-        "DEUG Sciences"
+  "rules": [
+    {
+      "target_cycle": "Licence (1ère année)",
+      "required_level": "Baccalauréat",
+      "accepted_profiles": [
+        "Baccalauréat Scientifique",
+        "Baccalauréat Sciences Économiques",
+        "Baccalauréat Professionnel"
       ],
-      "min_note": 12.0,
-      "specialties": ["mathématiques", "physique", "informatique"],
-      "description": "Formation en développement logiciel, réseaux, et systèmes d'information."
+      "conditions": "Matière principale mathématiques recommandée pour les filières scientifiques et économiques.",
+      "admission_type": "Étude de dossier + Entretien + Examen"
     },
-    "genie_civil": {
-      "name": "Génie Civil",
-      "name_en": "Civil Engineering",
-      "name_darija": "الهندسة المدنية",
-      "eligible_diplomas": [
-        "Bac Sciences Mathématiques",
-        "Bac Sciences Physiques",
-        "BTS Génie Civil",
-        "DUT Génie Civil"
+    {
+      "target_cycle": "Licence (3ème année - Passerelles)",
+      "required_level": "Bac+1 ou Bac+2",
+      "accepted_profiles": [
+        "BTS",
+        "DUT",
+        "DEUG",
+        "Diplôme équivalent"
       ],
-      "min_note": 12.0,
-      "specialties": ["mathématiques", "physique"],
-      "description": "Formation en construction, structures, et gestion de projets BTP."
+      "conditions": "Étude de dossier spécifique (mentions, nombre d'années d'études, notes des matières principales).",
+      "admission_type": "Étude de dossier + Entretien"
     },
-    "genie_electrique": {
-      "name": "Génie Électrique",
-      "name_en": "Electrical Engineering",
-      "name_darija": "الهندسة الكهربائية",
-      "eligible_diplomas": [
-        "Bac Sciences Mathématiques",
-        "Bac Sciences Physiques",
-        "BTS Électrotechnique",
-        "DUT Génie Électrique"
+    {
+      "target_cycle": "Master (1ère année)",
+      "required_level": "Bac+3",
+      "accepted_profiles": [
+        "Licence des études fondamentales",
+        "Licence professionnelle",
+        "Licence ISCAE",
+        "Diplôme équivalent (Bac+3)"
       ],
-      "min_note": 12.0,
-      "specialties": ["mathématiques", "physique", "électronique"],
-      "description": "Formation en systèmes électriques, électronique, et automatique."
-    },
-    "management": {
-      "name": "Management & Gestion",
-      "name_en": "Management & Business",
-      "name_darija": "التدبير والتسيير",
-      "eligible_diplomas": [
-        "Bac Sciences Économiques",
-        "Bac Sciences Mathématiques",
-        "Bac Lettres",
-        "BTS Comptabilité",
-        "DUT Gestion"
-      ],
-      "min_note": 11.0,
-      "specialties": ["économie", "gestion", "comptabilité"],
-      "description": "Formation en gestion d'entreprise, marketing, et finance."
+      "conditions": "Prérequis pédagogiques spécifiques selon la filière (ex: Informatique pour ISI, Gestion/Audit pour FACG).",
+      "admission_type": "Étude de dossier + Entretien jury"
     }
-  }
+  ]
 }
