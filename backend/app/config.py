@@ -21,9 +21,15 @@ class Settings(BaseSettings):
     # Use multilingual embedding so English questions can match French database texts
     embedding_model: str = "paraphrase-multilingual-MiniLM-L12-v2"
 
-    # ChromaDB
+    # ChromaDB (fallback/local)
     chroma_persist_dir: str = "./chroma_db"
     chroma_collection_name: str = "supmti_knowledge"
+
+    # Supabase (Database & Vector Store)
+    supabase_url: str = ""
+    supabase_key: str = ""
+    supabase_db_password: str = ""  # For direct Postgres connection if needed
+    use_supabase_chat_history: bool = False
 
     # RAG
     chunk_size: int = 500

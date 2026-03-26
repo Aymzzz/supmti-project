@@ -4,12 +4,16 @@ uvicorn[standard]
 python-multipart
 websockets
 
-# RAG Pipeline
+# RAG Pipeline & Database
 chromadb
+supabase>=2.3.0
+langchain-postgres
 sentence-transformers
 langchain
 langchain-community
 langchain-text-splitters
+psycopg[binary]
+asyncpg
 
 # LLM API (OpenRouter uses OpenAI-compatible API)
 openai

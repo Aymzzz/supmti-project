@@ -26,6 +26,11 @@ class ChatResponse(BaseModel):
     num_docs_retrieved: int = 0
 
 
+class ChatHistoryResponse(BaseModel):
+    session_id: str
+    messages: List[Dict]
+
+
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest, req: Request):
     """Send a message and get a response from the chatbot."""
@@ -41,6 +46,7 @@ async def chat(request: ChatRequest, req: Request):
 
     # Add user message to history
     session.add_message("user", request.message)
+    chat_service.persist_message(session.session_id, "user", request.message)
 
     # Get RAG pipeline from app state
     pipeline = req.app.state.rag_pipeline
@@ -56,6 +62,7 @@ async def chat(request: ChatRequest, req: Request):
     session.add_message("assistant", result["answer"], {
         "sources": result["sources"],
     })
+    chat_service.persist_message(session.session_id, "assistant", result["answer"])
 
     return ChatResponse(
         answer=result["answer"],
@@ -64,6 +71,19 @@ async def chat(request: ChatRequest, req: Request):
         sources=result["sources"],
         num_docs_retrieved=result["num_docs_retrieved"],
     )
+
+
+@router.get("/chat/history/{session_id}", response_model=ChatHistoryResponse)
+async def get_chat_history(session_id: str, limit: int = 50):
+    """Fetch stored message history for a session."""
+    history = chat_service.get_persisted_history(session_id=session_id, limit=limit)
+    return ChatHistoryResponse(session_id=session_id, messages=history)
+
+
+@router.get("/chat/sessions")
+async def list_chat_sessions(limit: int = 20):
+    """List available sessions (Supabase if enabled, else in-memory)."""
+    return {"sessions": chat_service.list_persisted_sessions(limit=limit)}
 
 
 @router.websocket("/ws/chat")
@@ -97,6 +117,7 @@ async def chat_websocket(websocket: WebSocket):
 
             # Add user message
             session.add_message("user", message)
+            chat_service.persist_message(session.session_id, "user", message)
 
             # Get RAG pipeline
             pipeline = websocket.app.state.rag_pipeline
@@ -122,6 +143,7 @@ async def chat_websocket(websocket: WebSocket):
 
             # Add to history
             session.add_message("assistant", full_response)
+            chat_service.persist_message(session.session_id, "assistant", full_response)
 
             await websocket.send_json({
                 "type": "end",
